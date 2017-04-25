@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, HttpResponse
 from .models import User, Secret
 from django.contrib import messages
+from django.db.models import Count
 from django.core.urlresolvers import reverse
 import bcrypt
 
@@ -33,7 +34,7 @@ def delete(request, id):
     return redirect('/secrets')
 
 def mostpop(request):
-    secrets = Secret.objects.all().order_by('-likes')
+    secrets = Secret.objects.all().annotate(numLikes = Count('likes')).order_by('-numLikes')
     secrets = secrets
     context ={
     "user" : User.objects.get(id = request.session['uid']),
